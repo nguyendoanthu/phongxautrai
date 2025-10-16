@@ -2,41 +2,82 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>A Phong đẹp trai</title>
   <style>
     body {
       text-align: center;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #a8edea, #fed6e3);
+      background-color: #f0f0f0;
+      margin-top: 50px;
     }
     h1 {
-      margin-top: 100px;
-      color: #333;
+      color: #ff5733;
     }
     button {
-      padding: 12px 25px;
-      margin: 20px;
+      margin: 10px;
+      padding: 10px 20px;
       border: none;
-      border-radius: 8px;
-      background-color: #ff7eb3;
+      background-color: #4CAF50;
       color: white;
-      font-size: 18px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: 0.3s;
+      font-size: 16px;
     }
     button:hover {
-      background-color: #ff4b8e;
+      background-color: #45a049;
+    }
+    #doanSo {
+      margin-top: 40px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+    }
+    input {
+      padding: 8px;
+      font-size: 16px;
+      width: 120px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>A Phong đẹp trai 😎</h1>
 
+  <h1>A Phong đẹp trai</h1>
+
+  <!-- 3 nút chuyển trang -->
   <button onclick="window.location.href='messi.html'">Giới thiệu về Messi</button>
-  <button onclick="window.location.href='phongdz.html'">Giới thiệu về Dragon</button>
-  <button onclick="window.location.href='soso.html'">Chơi đoán số</button>
+  <button onclick="window.location.href='dragon.html'">Giới thiệu về Dragon</button>
 
+  <!-- Phần trò chơi đoán số -->
+  <div id="doanSo">
+    <h2>🎯 Trò chơi đoán số</h2>
+    <p>Máy đã chọn 1 số từ 1 đến 10. Bạn thử đoán nhé!</p>
+    <input type="number" id="soNhap" min="1" max="10" placeholder="Nhập số...">
+    <button onclick="kiemTra()">Kiểm tra</button>
+    <p id="ketqua"></p>
+  </div>
+
+  <script>
+    // Máy tính chọn ngẫu nhiên 1 số từ 1–10
+    const soBiMat = Math.floor(Math.random() * 10) + 1;
+
+    function kiemTra() {
+      const soNguoiDung = document.getElementById("soNhap").value;
+      const ketqua = document.getElementById("ketqua");
+
+      if (soNguoiDung === "") {
+        ketqua.textContent = "⚠️ Vui lòng nhập số!";
+      } else if (soNguoiDung < soBiMat) {
+        ketqua.textContent = "🔽 Số bạn nhập thấp hơn!";
+      } else if (soNguoiDung > soBiMat) {
+        ketqua.textContent = "🔼 Số bạn nhập cao hơn!";
+      } else {
+        ketqua.textContent = "🎉 Chính xác! Số bí mật là " + soBiMat + "!";
+      }
+    }
+  </script>
 
 </body>
 </html>
