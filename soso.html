@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A Phong đẹp trai — Đoán số</title>
+  <style>
+    :root{
+      --bg1: #f8f9ff;
+      --card: #ffffff;
+      --accent: #0b5394;
+      --muted: #57606a;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(135deg,#e6f0ff,#fefefe);}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px;}
+    .card{
+      width:100%;max-width:720px;background:var(--card);border-radius:14px;padding:28px;box-shadow:0 10px 30px rgba(20,30,60,0.08);text-align:center;
+    }
+    h1{margin:0 0 10px;font-size:28px;color:var(--accent)}
+    p.lead{color:var(--muted);margin-top:0;margin-bottom:18px;}
+    .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+    input[type="number"]{
+      padding:12px 14px;border-radius:10px;border:1px solid #e6e9ef;width:200px;font-size:16px;
+      box-shadow:inset 0 1px 0 rgba(0,0,0,0.02);
+    }
+    button{
+      padding:12px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:600;
+      background:linear-gradient(180deg,#2b6cb0,#174b86);color:#fff;
+    }
+    button.secondary{background:linear-gradient(180deg,#e6e9ef,#dfe6f3);color:#123;}
+    .result{margin-top:18px;font-size:18px;font-weight:600}
+    .hint{font-size:20px;margin-top:8px}
+    .meta{margin-top:8px;color:#777}
+    .small{font-size:13px;color:#888;margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="main" aria-live="polite">
+      <h1>A Phong đẹp trai 😎</h1>
+      <p class="lead">Máy tính đã chọn 1 số từ <strong>1 đến 100</strong>. Bạn đoán xem là số bao nhiêu?</p>
+
+      <div class="controls">
+        <input id="guessInput" type="number" placeholder="Nhập số (1–100)" min="1" max="100" />
+        <button id="checkBtn">Kiểm tra</button>
+        <button id="resetBtn" class="secondary">Chơi lại</button>
+      </div>
+
+      <div class="result" id="resultText">Chưa có lượt đoán nào — chúc bạn may mắn!</div>
+      <div class="hint" id="hintText" aria-live="polite"></div>
+      <div class="meta" id="metaText">Số lần thử: <span id="tries">0</span></div>
+      <div class="small">Gợi ý: nhập số rồi bấm "Kiểm tra".</div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      // Thiết lập ban đầu
+      const MIN = 1, MAX = 100;
+      let secret = randomInt(MIN, MAX);
+      let tries = 0;
+      let finished = false;
+
+      // Element refs
+      const guessInput = document.getElementById('guessInput');
+      const checkBtn = document.getElementById('checkBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const resultText = document.getElementById('resultText');
+      const hintText = document.getElementById('hintText');
+      const triesEl = document.getElementById('tries');
+
+      // Hàm tạo số ngẫu nhiên
+      function randomInt(min, max){
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      // Cập nhật hiển thị
+      function updateTries(){
+        triesEl.textContent = tries;
+      }
+
+      // Xử lý khi bấm kiểm tra
+      function checkGuess(){
+        if (finished) return;
+        const raw = guessInput.value;
+        if (raw === '') {
+          resultText.textContent = 'Bạn chưa nhập số!';
+          hintText.textContent = '';
+          return;
+        }
+        const guess = Number(raw);
+        if (!Number.isFinite(guess) || guess < MIN || guess > MAX) {
+          resultText.textContent = `Vui lòng nhập số trong khoảng ${MIN}–${MAX}.`;
+          hintText.textContent = '';
+          return;
+        }
+
+        tries++;
+        updateTries();
+
+        if (guess === secret) {
+          resultText.textContent = '🎉 Chính xác! Bạn đoán trúng rồi.';
+          hintText.textContent = `Số bí mật là ${secret}. Bạn đoán trong ${tries} lượt.`;
+          finished = true;
+          checkBtn.disabled = true;
+        } else if (guess > secret) {
+          resultText.textContent = 'Sai — thấp hơn (HINT: "thấp hơn")';
+          hintText.textContent = 'Số bạn nhập lớn hơn số máy tính đã chọn.';
+        } else {
+          resultText.textContent = 'Sai — cao hơn (HINT: "cao hơn")';
+          hintText.textContent = 'Số bạn nhập nhỏ hơn số máy tính đã chọn.';
+        }
+      }
+
+      // Đặt lại trò chơi
+      function resetGame(){
+        secret = randomInt(MIN, MAX);
+        tries = 0;
+        finished = false;
+        checkBtn.disabled = false;
+        guessInput.value = '';
+        resultText.textContent = 'Máy đã chọn số mới. Bắt đầu đoán nào!';
+        hintText.textContent = '';
+        updateTries();
+        guessInput.focus();
+        // console.log('Secret:', secret); // bật nếu bạn muốn kiểm tra
+      }
+
+      // Sự kiện
+      checkBtn.addEventListener('click', checkGuess);
+      resetBtn.addEventListener('click', resetGame);
+
+      // Hỗ trợ bấm Enter trong input
+      guessInput.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') checkGuess();
+      });
+
+      // Khởi tạo
+      updateTries();
+      // guessInput.focus();
+    })();
+  </script>
+</body>
+</html>
